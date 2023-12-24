@@ -7,7 +7,7 @@ import {
     VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme } from 'antd';
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 
@@ -28,7 +28,7 @@ const ContainerDefault: React.FC = () => {
                         {
                             key: '1',
                             icon: <UserOutlined />,
-                            label: 'nav 1',
+                            label: <Link to={'/'}>Categories</Link>,
                         },
                         {
                             key: '2',
