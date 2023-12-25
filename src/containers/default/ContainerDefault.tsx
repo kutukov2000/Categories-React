@@ -2,9 +2,8 @@ import React, {useState} from "react";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
+    PlusCircleOutlined,
+    UnorderedListOutlined
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme } from 'antd';
 import { Link, Outlet } from "react-router-dom";
@@ -27,19 +26,14 @@ const ContainerDefault: React.FC = () => {
                     items={[
                         {
                             key: '1',
-                            icon: <UserOutlined />,
+                            icon: <UnorderedListOutlined />,
                             label: <Link to={'/'}>Categories</Link>,
                         },
                         {
                             key: '2',
-                            icon: <VideoCameraOutlined />,
-                            label: 'nav 2',
-                        },
-                        {
-                            key: '3',
-                            icon: <UploadOutlined />,
-                            label: 'nav 3',
-                        },
+                            icon: <PlusCircleOutlined />,
+                            label: <Link to={'create'}>Create Category</Link>,
+                        }
                     ]}
                 />
             </Sider>
