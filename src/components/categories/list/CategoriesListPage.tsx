@@ -3,8 +3,8 @@ import { ICategoryItem } from "./types";
 import Table, { ColumnsType } from "antd/es/table";
 import http_common from "../../../http_common";
 import { APP_ENV } from "../../../env";
-import { Button } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { Button, message } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
 const CategoriesListPage: React.FC = () => {
@@ -19,6 +19,18 @@ const CategoriesListPage: React.FC = () => {
                 setList(resp.data);
             });
     }, []);
+
+    const deleteCategory = async (id: number) => {
+        try {
+            await http_common.delete(`/api/categories/${id}`);
+        }
+        catch (ex) {
+            message.error('Category creating error!');
+            return;
+        }
+
+        setList(prevCategories => prevCategories.filter(category => category.id !== id));
+    }
 
     const columns: ColumnsType<ICategoryItem> = [
         {
@@ -40,11 +52,21 @@ const CategoriesListPage: React.FC = () => {
         },
         {
             title: 'Actions',
-            dataIndex:'id',
+            dataIndex: 'id',
             render: (id) => {
                 return (
-                    <div style={{display:'flex',gap:'5px'}}>
-                        <Link to={`edit/${id}`}><Button type="primary" icon={<EditOutlined />} size="large" style={{ backgroundColor: '#eb8934' }}/></Link>
+                    <div style={{ display: 'flex', gap: '5px' }}>
+                        <Link to={`edit/${id}`}>
+                            <Button type="primary" 
+                                    icon={<EditOutlined />} 
+                                    size="large" 
+                                    style={{ backgroundColor: '#eb8934' }} />
+                            </Link>
+                        <Button type="primary"
+                            icon={<DeleteOutlined />}
+                            size="large"
+                            style={{ backgroundColor: '#8c1c1c' }}
+                            onClick={() => { deleteCategory(id) }} />
                     </div>
                 );
             }
