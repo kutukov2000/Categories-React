@@ -3,11 +3,14 @@ import { ICategoryItem } from "./types";
 import Table, { ColumnsType } from "antd/es/table";
 import http_common from "../../../http_common";
 import { APP_ENV } from "../../../env";
+import { Button } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 const CategoriesListPage: React.FC = () => {
     const [list, setList] = useState<ICategoryItem[]>([]);
 
-    const urlServerImage = APP_ENV.BASE_URL +"/upload/150_";
+    const urlServerImage = APP_ENV.BASE_URL + "/upload/150_";
 
     useEffect(() => {
         http_common.get("/api/categories")
@@ -27,13 +30,24 @@ const CategoriesListPage: React.FC = () => {
             dataIndex: 'image',
             render: (src: string) => {
                 return (
-                    <img src={urlServerImage+src} alt="" width={150} />
+                    <img src={urlServerImage + src} alt="" width={150} />
                 );
             }
         },
         {
             title: 'Name',
             dataIndex: 'name'
+        },
+        {
+            title: 'Actions',
+            dataIndex:'id',
+            render: (id) => {
+                return (
+                    <div style={{display:'flex',gap:'5px'}}>
+                        <Link to={`edit/${id}`}><Button type="primary" icon={<EditOutlined />} size="large" style={{ backgroundColor: '#eb8934' }}/></Link>
+                    </div>
+                );
+            }
         }
     ];
 
