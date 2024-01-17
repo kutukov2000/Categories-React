@@ -55,7 +55,14 @@ const ContainerDefault: React.FC = () => {
                             height: 64,
                         }}
                     />
-                    <Link to={'register'}><Button>Register</Button></Link>
+                    <div style={{ display: 'flex', gap: '1vw' }}>
+                        <Link to={'register'}>
+                            <Button>Register</Button>
+                        </Link>
+                        <Link to={'login'}>
+                            <Button type="primary">Login</Button>
+                        </Link>
+                    </div>
                 </Header>
                 <Content
                     style={{
