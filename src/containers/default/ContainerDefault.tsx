@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -16,7 +16,7 @@ const ContainerDefault: React.FC = () => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
     return (
-        <Layout style={{height: "100vh"}}>
+        <Layout style={{ height: "100vh" }}>
             <Sider trigger={null} collapsible collapsed={collapsed}>
                 <div className="demo-logo-vertical" />
                 <Menu
@@ -38,7 +38,13 @@ const ContainerDefault: React.FC = () => {
                 />
             </Sider>
             <Layout>
-                <Header style={{ padding: 0, background: colorBgContainer }}>
+                <Header style={{
+                    padding: 0,
+                    background: colorBgContainer,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    paddingRight: '1vw'
+                }}>
                     <Button
                         type="text"
                         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -49,6 +55,7 @@ const ContainerDefault: React.FC = () => {
                             height: 64,
                         }}
                     />
+                    <Link to={'register'}><Button>Register</Button></Link>
                 </Header>
                 <Content
                     style={{
@@ -59,7 +66,7 @@ const ContainerDefault: React.FC = () => {
                         borderRadius: borderRadiusLG,
                     }}
                 >
-                    <Outlet/>
+                    <Outlet />
                 </Content>
             </Layout>
         </Layout>
