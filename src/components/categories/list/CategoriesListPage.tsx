@@ -76,7 +76,7 @@ const CategoriesListPage: React.FC = () => {
     return (
         <>
             <h1>Список категорій</h1>
-            <Table dataSource={list} columns={columns} />
+            <Table dataSource={list} columns={columns} rowKey="id"/>
         </>
     )
 }
