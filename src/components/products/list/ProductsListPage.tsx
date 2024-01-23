@@ -3,9 +3,8 @@ import { IProduct } from "./types";
 import Table, { ColumnsType } from "antd/es/table";
 import http_common from "../../../http_common";
 import { APP_ENV } from "../../../env";
-// import { Button, message } from "antd";
-// import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-// import { Link } from "react-router-dom";
+import { Button, message } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const ProductsListPage: React.FC = () => {
     const [list, setList] = useState<IProduct[]>([]);
@@ -14,23 +13,23 @@ const ProductsListPage: React.FC = () => {
 
     useEffect(() => {
         http_common.get("/api/products")
-        .then(resp => {
-            console.log(resp.data);
-            setList(resp.data);
-        });
+            .then(resp => {
+                console.log(resp.data);
+                setList(resp.data);
+            });
     }, []);
 
-    // const deleteCategory = async (id: number) => {
-    //     try {
-    //         await http_common.delete(`/api/categories/${id}`);
-    //     }
-    //     catch (ex) {
-    //         message.error('Category creating error!');
-    //         return;
-    //     }
+    const deleteProduct = async (id: number) => {
+        try {
+            await http_common.delete(`/api/products/${id}`);
+        }
+        catch (ex) {
+            message.error('Product deleting error!');
+            return;
+        }
 
-    //     setList(prevCategories => prevCategories.filter(category => category.id !== id));
-    // }
+        setList(prevProducts => prevProducts.filter(product => product.id !== id));
+    }
 
     const columns: ColumnsType<IProduct> = [
         {
@@ -63,28 +62,28 @@ const ProductsListPage: React.FC = () => {
                     ))}
                 </>
             )
+        },
+        {
+            title: 'Actions',
+            dataIndex: 'id',
+            render: (id) => {
+                return (
+                    <div style={{ display: 'flex', gap: '5px' }}>
+                        {/* <Link to={`edit/${id}`}>
+                            <Button type="primary"
+                                icon={<EditOutlined />}
+                                size="large"
+                                style={{ backgroundColor: '#eb8934' }} />
+                        </Link> */}
+                        <Button type="primary"
+                            icon={<DeleteOutlined />}
+                            size="large"
+                            style={{ backgroundColor: '#8c1c1c' }}
+                            onClick={() => { deleteProduct(id) }} />
+                    </div>
+                );
+            }
         }
-        // {
-        //     title: 'Actions',
-        //     dataIndex: 'id',
-        //     render: (id) => {
-        //         return (
-        //             <div style={{ display: 'flex', gap: '5px' }}>
-        //                 <Link to={`edit/${id}`}>
-        //                     <Button type="primary" 
-        //                             icon={<EditOutlined />} 
-        //                             size="large" 
-        //                             style={{ backgroundColor: '#eb8934' }} />
-        //                     </Link>
-        //                 <Button type="primary"
-        //                     icon={<DeleteOutlined />}
-        //                     size="large"
-        //                     style={{ backgroundColor: '#8c1c1c' }}
-        //                     onClick={() => { deleteCategory(id) }} />
-        //             </div>
-        //         );
-        //     }
-        // }
     ];
 
     return (
