@@ -6,6 +6,7 @@ import type { UploadChangeParam } from 'antd/es/upload';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { IProductCreate } from "./types.ts";
 import http_common from "../../../http_common.ts";
+import { useCheckImageFile } from "../../../utils/hooks.ts";
 
 type FieldType = {
     category_id?: string;
@@ -80,19 +81,7 @@ const ProductCreatePage = () => {
         console.log(fileList);
     };
 
-    const checkImageFile = (file: RcFile) => {
-        const isImage = /^image\/\w+/.test(file.type);
-        if (!isImage) {
-            message.error('Choose image file!');
-        }
-
-        const isSmallerThat10Mb = file.size / 1024 / 1024 < 10;
-        if (!isSmallerThat10Mb) {
-            message.error('File size should not exceed 10MB!');
-        }
-
-        return isImage && isSmallerThat10Mb;
-    };
+    const checkImageFile = (file: RcFile) => useCheckImageFile(file);
 
     const uploadButton = (
         <div>
