@@ -4,7 +4,8 @@ import Table, { ColumnsType } from "antd/es/table";
 import http_common from "../../../http_common";
 import { APP_ENV } from "../../../env";
 import { Button, message } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 const ProductsListPage: React.FC = () => {
     const [list, setList] = useState<IProduct[]>([]);
@@ -69,12 +70,12 @@ const ProductsListPage: React.FC = () => {
             render: (id) => {
                 return (
                     <div style={{ display: 'flex', gap: '5px' }}>
-                        {/* <Link to={`edit/${id}`}>
+                        <Link to={`edit/${id}`}>
                             <Button type="primary"
                                 icon={<EditOutlined />}
                                 size="large"
                                 style={{ backgroundColor: '#eb8934' }} />
-                        </Link> */}
+                        </Link>
                         <Button type="primary"
                             icon={<DeleteOutlined />}
                             size="large"

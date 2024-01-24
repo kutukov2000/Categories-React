@@ -9,6 +9,7 @@ import RegisterPage from './components/auth/register/RegisterPage.tsx';
 import LoginPage from './components/auth/login/LoginPage.tsx';
 import ProductsListPage from './components/products/list/ProductsListPage.tsx';
 import ProductCreatePage from './components/products/create/ProductCreatePage.tsx';
+import ProductEditPage from './components/products/edit/ProductEditPage.tsx';
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
 
         <Route path='products' element={<ProductsListPage />} />
         <Route path='products/create' element={<ProductCreatePage />} />
+        <Route path='products/edit/:id' element={<ProductEditPage />} />
 
         <Route path='*' element={<NoMatch />} />
       </Route>
