@@ -1,8 +1,7 @@
 import { Button, Divider, Form, Input, Upload, message, Alert } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import type { UploadChangeParam } from 'antd/es/upload';
+import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { IProductCreate } from "./types.ts";
 import http_common from "../../../http_common.ts";
@@ -27,7 +26,6 @@ const ProductCreatePage = () => {
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const [loading, setLoading] = useState(false);
 
     const onFinish = async (values: any) => {
         console.log('Success:', values);
@@ -67,28 +65,10 @@ const ProductCreatePage = () => {
         console.log('Failed:', errorInfo);
     };
 
-    const handleImageFileChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-        if (info.file.status === 'uploading') {
-            setLoading(true);
-        }
-
-        if (info.file.status === 'done' || info.file.status === 'error') {
-            setLoading(false);
-            setFileList([...fileList, info.file]);
-            setErrorMessage("");
-        }
-
-        console.log(fileList);
-    };
+    const handleImageFileListChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+        setFileList(newFileList);
 
     const checkImageFile = (file: RcFile) => useCheckImageFile(file);
-
-    const uploadButton = (
-        <div>
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </div>
-    );
 
     return (
         <>
@@ -131,32 +111,16 @@ const ProductCreatePage = () => {
                     <Input />
                 </Form.Item>
 
-                <div style={{ display: 'flex', width: 'fit-content' }}>
-                    {fileList.map((file: UploadFile) => (
-                        <Upload
-                            name="avatar"
-                            listType="picture-card"
-                            className="avatar-uploader"
-                            showUploadList={false}
-                            action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                            beforeUpload={checkImageFile}
-                            onChange={handleImageFileChange}
-                            accept={"image/*"}>
-                            <img key={file.uid} src={URL.createObjectURL(file.originFileObj as Blob)} alt="Category image" style={{ width: '100%' }} />
-                        </Upload>
-                    ))}
-                    <Upload
-                        name="avatar"
-                        listType="picture-card"
-                        className="avatar-uploader"
-                        showUploadList={false}
-                        action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                        beforeUpload={checkImageFile}
-                        onChange={handleImageFileChange}
-                        accept={"image/*"}>
-                        {uploadButton}
-                    </Upload>
-                </div>
+                <Upload
+                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                    listType="picture-card"
+                    showUploadList={true}
+                    fileList={fileList}
+                    beforeUpload={checkImageFile}
+                    onChange={handleImageFileListChange}
+                    accept={"image/*"}>
+                    <PlusOutlined />
+                </Upload>
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">
