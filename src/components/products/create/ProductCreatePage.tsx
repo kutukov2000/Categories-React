@@ -1,11 +1,11 @@
-import { Button, Divider, Form, Input, Upload, message, Alert } from "antd";
+import { Button, Divider, Form, Input, Upload, message, Alert, Modal } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { IProductCreate } from "./types.ts";
 import http_common from "../../../http_common.ts";
-import { useCheckImageFile } from "../../../utils/hooks.ts";
+import { useCheckImageFile, useImagePreview } from "../../../utils/hooks.ts";
 
 type FieldType = {
     category_id?: string;
@@ -26,6 +26,8 @@ const ProductCreatePage = () => {
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>("");
+
+    const { previewOpen, previewImage, previewTitle, handleCancel, handlePreview } = useImagePreview();  
 
     const onFinish = async (values: any) => {
         console.log('Success:', values);
@@ -118,9 +120,14 @@ const ProductCreatePage = () => {
                     fileList={fileList}
                     beforeUpload={checkImageFile}
                     onChange={handleImageFileListChange}
+                    onPreview={handlePreview}
                     accept={"image/*"}>
                     <PlusOutlined />
                 </Upload>
+
+                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">

@@ -3,16 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import http_common from "../../../http_common.ts";
 import { IRegister, IRegisterForm } from "./types.ts";
-import { RcFile } from "antd/es/upload";
 import { PlusOutlined } from "@ant-design/icons";
 import { imageConverter } from "../../../interfaces/forms";
+import { useImagePreview } from "../../../utils/hooks.ts";
 
 const RegisterPage = () => {
 
     const navigate = useNavigate();
-    const [previewOpen, setPreviewOpen] = useState<boolean>(false);
-    const [previewImage, setPreviewImage] = useState('');
-    const [previewTitle, setPreviewTitle] = useState('');
+
+    const { previewOpen, previewImage, previewTitle, handleCancel, handlePreview } = useImagePreview();  
+
     const [file, setFile] = useState<UploadFile | null>();
     const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -42,18 +42,6 @@ const RegisterPage = () => {
         borderTop: '2px solid #1890ff',
         margin: '5px 0 50px 0',
     };
-
-    const handleCancel = () => setPreviewOpen(false);
-
-    const handlePreview = async (file: UploadFile) => {
-        console.log("preview image", file);
-        if (!file.url && !file.preview) {
-            file.preview = URL.createObjectURL(file.originFileObj as RcFile);
-        }
-        setPreviewImage(file.url || (file.preview as string));
-        setPreviewOpen(true);
-        setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
-    }
 
     const handleChange: UploadProps['onChange'] = ({ fileList: newFile }) => {
         console.log("file chnage",)

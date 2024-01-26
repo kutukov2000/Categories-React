@@ -1,12 +1,11 @@
-import { Button, Divider, Form, Input, Upload, message, Alert } from "antd";
+import { Button, Divider, Form, Input, Upload, message, Alert, Modal } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import type { UploadChangeParam } from 'antd/es/upload';
+import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { ICategoryCreate } from "./types.ts";
 import http_common from "../../../http_common.ts";
-import { useCheckImageFile } from "../../../utils/hooks.ts";
+import { useCheckImageFile, useImagePreview } from "../../../utils/hooks.ts";
 
 type FieldType = {
     name?: string;
@@ -21,22 +20,24 @@ const CategoryCreatePage = () => {
 
     const navigate = useNavigate();
 
-    const [file, setFile] = useState<File | null>(null);
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const [loading, setLoading] = useState(false);
+
+    const { previewOpen, previewImage, previewTitle, handleCancel, handlePreview } = useImagePreview();
 
     const onFinish = async (values: any) => {
         console.log('Success:', values);
-        console.log('file:', file);
 
-        if (file == null) {
+        if (fileList == null) {
             setErrorMessage("Choose image!");
             return;
         }
 
+        const fileListAsFile = fileList.map(file => file.originFileObj ? file.originFileObj : file.url) as File[];
+
         const model: ICategoryCreate = {
             name: values.name,
-            image: file
+            image: fileListAsFile[0]
         };
 
         try {
@@ -58,26 +59,8 @@ const CategoryCreatePage = () => {
         console.log('Failed:', errorInfo);
     };
 
-    const handleImageFileChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-        if (info.file.status === 'uploading') {
-            setLoading(true);
-            return;
-        }
-
-        if (info.file.status === 'done') {
-            const file = info.file.originFileObj as File;
-            setLoading(false);
-            setFile(file);
-            setErrorMessage("");
-        }
-    };
-
-    const uploadButton = (
-        <div>
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </div>
-    );
+    const handleImageFileListChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+        setFileList(newFileList);
 
     const checkImageFile = (file: RcFile) => useCheckImageFile(file);
 
@@ -102,13 +85,18 @@ const CategoryCreatePage = () => {
                     name="avatar"
                     listType="picture-card"
                     className="avatar-uploader"
-                    showUploadList={false}
+                    showUploadList={true}
                     action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
                     beforeUpload={checkImageFile}
-                    onChange={handleImageFileChange}
+                    onChange={handleImageFileListChange}
+                    onPreview={handlePreview}
                     accept={"image/*"} >
-                    {file ? <img src={URL.createObjectURL(file)} alt="Category image" style={{ width: '100%' }} /> : uploadButton}
+                    {fileList?.length > 0 ? null : <PlusOutlined />}
                 </Upload>
+
+                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">

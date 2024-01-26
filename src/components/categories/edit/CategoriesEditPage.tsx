@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Button, Divider, Form, Input, Upload, message, Alert } from "antd";
+import { Button, Divider, Form, Input, Upload, message, Alert, Modal } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
-import type { UploadChangeParam } from 'antd/es/upload';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { ICategoryEdit } from "./types.ts";
 import { APP_ENV } from "../../../env/index.ts";
 import http_common from "../../../http_common.ts";
-import { useCheckImageFile } from "../../../utils/hooks.ts";
+import { useCheckImageFile, useImagePreview } from "../../../utils/hooks.ts";
+import { PlusOutlined } from "@ant-design/icons";
 
 type FieldType = {
     name?: string;
@@ -20,36 +20,49 @@ const customDividerStyle = {
 const CategoriesEditPage = () => {
     const { id } = useParams();
 
-    const [category, setCategory] = useState<ICategoryEdit>();
+    // const [category, setCategory] = useState<ICategoryEdit>();
     const navigate = useNavigate();
     const urlServerImage = APP_ENV.BASE_URL + "/upload/150_";
 
     const [form] = Form.useForm(); // Using Ant Design useForm hook
 
-    const [file, setFile] = useState<File | null>(null);
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>("");
+
+    const { previewOpen, previewImage, previewTitle, handleCancel, handlePreview } = useImagePreview();
 
     useEffect(() => {
         http_common.get(`/api/categories/${id}`)
             .then(response => {
                 console.log(response.data);
-                setCategory(response.data);
+                // setCategory(response.data);
                 form.setFieldsValue({ name: response.data?.name });
+
+                setFileList([
+                    {
+                        uid: response.data?.id,
+                        name: response.data?.image,
+                        status: 'done',
+                        url: urlServerImage + response.data?.image
+                    }
+                ]);
+                console.log(urlServerImage + response.data?.image);
             });
     }, [id]);
 
-    const onFinish = async (values:any) => {
+    const onFinish = async (values: any) => {
         console.log('Success:', values);
-        console.log('file:', file);
 
-        if (file == null) {
+        if (fileList == null) {
             setErrorMessage("Choose image!");
             return;
         }
 
+        const fileListAsFile=fileList.map(file => file.originFileObj ? file.originFileObj : file.url) as File[];
+
         const model: ICategoryEdit = {
             name: values.name,
-            image: file
+            image: fileListAsFile[0]
         };
 
         try {
@@ -66,13 +79,8 @@ const CategoriesEditPage = () => {
         }
     };
 
-    const handleImageFileChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-        if (info.file.status === 'done') {
-            const file = info.file.originFileObj as File;
-            setFile(file);
-            setErrorMessage("");
-        }
-    };
+    const handleImageFileListChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+        setFileList(newFileList);
 
     const checkImageFile = (file: RcFile) => useCheckImageFile(file);
 
@@ -97,13 +105,19 @@ const CategoriesEditPage = () => {
                     name="image"
                     listType="picture-card"
                     className="avatar-uploader"
-                    showUploadList={false}
+                    showUploadList={true}
+                    fileList={fileList}
                     action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
                     beforeUpload={checkImageFile}
-                    onChange={handleImageFileChange}
+                    onChange={handleImageFileListChange}
+                    onPreview={handlePreview}
                     accept={"image/*"} >
-                    <img src={file ? URL.createObjectURL(file) : urlServerImage + category?.image} alt="Category image" style={{ width: '100%' }} />
+                    {fileList?.length > 0 ? null : <PlusOutlined />}
                 </Upload>
+
+                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">

@@ -1,4 +1,4 @@
-import { Button, Divider, Form, Input, Upload, message, Alert } from "antd";
+import { Button, Divider, Form, Input, Upload, message, Alert, Modal } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { PlusOutlined } from '@ant-design/icons';
@@ -6,7 +6,7 @@ import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { IProductEdit } from "./types.ts";
 import http_common from "../../../http_common.ts";
 import { APP_ENV } from "../../../env/index.ts";
-import { useCheckImageFile } from "../../../utils/hooks.ts";
+import { useCheckImageFile, useImagePreview } from "../../../utils/hooks.ts";
 
 type FieldType = {
     category_id?: string;
@@ -32,6 +32,8 @@ const ProductEditPage = () => {
     const [errorMessage, setErrorMessage] = useState<string>("");
 
     const [form] = Form.useForm();
+
+    const { previewOpen, previewImage, previewTitle, handleCancel, handlePreview } = useImagePreview();  
 
     useEffect(() => {
         http_common.get(`/api/products/${id}`)
@@ -155,10 +157,15 @@ const ProductEditPage = () => {
                     action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
                     beforeUpload={checkImageFile}
                     onChange={handleImageFileChange}
+                    onPreview={handlePreview}
                     fileList={fileList}
                     accept={"image/*"}>
                     <PlusOutlined />
                 </Upload>
+
+                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">
