@@ -1,4 +1,4 @@
-import { Button, Divider, Form, Input, Upload, message, Alert, Modal } from "antd";
+import { Button, Divider, Form, Input, Upload, message, Alert } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { PlusOutlined } from '@ant-design/icons';
@@ -6,6 +6,7 @@ import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { ICategoryCreate } from "./types.ts";
 import http_common from "../../../http_common.ts";
 import { useCheckImageFile, useImagePreview } from "../../../utils/hooks.ts";
+import ImagePreviewModal from "../../ImagePreviewModal.tsx";
 
 type FieldType = {
     name?: string;
@@ -94,9 +95,10 @@ const CategoryCreatePage = () => {
                     {fileList?.length > 0 ? null : <PlusOutlined />}
                 </Upload>
 
-                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
+                <ImagePreviewModal open={previewOpen}
+                    title={previewTitle}
+                    image={previewImage}
+                    onCancel={handleCancel} />
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">

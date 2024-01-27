@@ -1,4 +1,4 @@
-import { Button, Divider, Form, Input, message, Alert, Modal, Upload, UploadFile, UploadProps } from "antd";
+import { Button, Divider, Form, Input, message, Alert, Upload, UploadFile, UploadProps } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import http_common from "../../../http_common.ts";
@@ -6,12 +6,13 @@ import { IRegister, IRegisterForm } from "./types.ts";
 import { PlusOutlined } from "@ant-design/icons";
 import { imageConverter } from "../../../interfaces/forms";
 import { useImagePreview } from "../../../utils/hooks.ts";
+import ImagePreviewModal from "../../ImagePreviewModal.tsx";
 
 const RegisterPage = () => {
 
     const navigate = useNavigate();
 
-    const { previewOpen, previewImage, previewTitle, handleCancel, handlePreview } = useImagePreview();  
+    const { previewOpen, previewImage, previewTitle, handleCancel, handlePreview } = useImagePreview();
 
     const [file, setFile] = useState<UploadFile | null>();
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -155,9 +156,10 @@ const RegisterPage = () => {
                     <Input.Password id={"confirm"} />
                 </Form.Item>
 
-                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
+                <ImagePreviewModal open={previewOpen}
+                    title={previewTitle}
+                    image={previewImage}
+                    onCancel={handleCancel} />
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">

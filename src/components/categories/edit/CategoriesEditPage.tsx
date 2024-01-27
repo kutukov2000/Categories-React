@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Divider, Form, Input, Upload, message, Alert, Modal } from "antd";
+import { Button, Divider, Form, Input, Upload, message, Alert } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { ICategoryEdit } from "./types.ts";
@@ -7,6 +7,7 @@ import { APP_ENV } from "../../../env/index.ts";
 import http_common from "../../../http_common.ts";
 import { useCheckImageFile, useImagePreview } from "../../../utils/hooks.ts";
 import { PlusOutlined } from "@ant-design/icons";
+import ImagePreviewModal from "../../ImagePreviewModal.tsx";
 
 type FieldType = {
     name?: string;
@@ -58,7 +59,7 @@ const CategoriesEditPage = () => {
             return;
         }
 
-        const fileListAsFile=fileList.map(file => file.originFileObj ? file.originFileObj : file.url) as File[];
+        const fileListAsFile = fileList.map(file => file.originFileObj ? file.originFileObj : file.url) as File[];
 
         const model: ICategoryEdit = {
             name: values.name,
@@ -115,9 +116,10 @@ const CategoriesEditPage = () => {
                     {fileList?.length > 0 ? null : <PlusOutlined />}
                 </Upload>
 
-                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
+                <ImagePreviewModal open={previewOpen}
+                    title={previewTitle}
+                    image={previewImage}
+                    onCancel={handleCancel} />
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">

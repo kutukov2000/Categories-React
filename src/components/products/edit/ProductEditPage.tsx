@@ -1,4 +1,4 @@
-import { Button, Divider, Form, Input, Upload, message, Alert, Modal } from "antd";
+import { Button, Divider, Form, Input, Upload, message, Alert } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { PlusOutlined } from '@ant-design/icons';
@@ -7,6 +7,7 @@ import { IProductEdit } from "./types.ts";
 import http_common from "../../../http_common.ts";
 import { APP_ENV } from "../../../env/index.ts";
 import { useCheckImageFile, useImagePreview } from "../../../utils/hooks.ts";
+import ImagePreviewModal from "../../ImagePreviewModal.tsx";
 
 type FieldType = {
     category_id?: string;
@@ -33,7 +34,7 @@ const ProductEditPage = () => {
 
     const [form] = Form.useForm();
 
-    const { previewOpen, previewImage, previewTitle, handleCancel, handlePreview } = useImagePreview();  
+    const { previewOpen, previewImage, previewTitle, handleCancel, handlePreview } = useImagePreview();
 
     useEffect(() => {
         http_common.get(`/api/products/${id}`)
@@ -163,9 +164,10 @@ const ProductEditPage = () => {
                     <PlusOutlined />
                 </Upload>
 
-                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
+                <ImagePreviewModal open={previewOpen}
+                    title={previewTitle}
+                    image={previewImage}
+                    onCancel={handleCancel} />
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit">
